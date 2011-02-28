@@ -11,7 +11,7 @@ SET( LIBRARY_OUTPUT_PATH "${vtkInteractionDevice_BINARY_DIR}/lib" )
 
 FIND_PACKAGE( VTK REQUIRED )
 INCLUDE( ${VTK_USE_FILE} ) 
-
+SET( VTK_LIBS vtkRendering )
 
 #######################################
 # Static or Shared Libraries
@@ -73,10 +73,10 @@ INCLUDE_DIRECTORIES( ${vtkInteractionDevice_BINARY_DIR} )
 # Include vrpn
 #######################################
 
-FIND_PATH( VRPN_DIR vrpnBaseClass.h )
+FIND_PATH( VRPN_INCLUDE_DIR vrpnBaseClass.h )
+find_library(VRPN_LIBRARY vrpn)
 
-INCLUDE_DIRECTORIES( ${VRPN_DIR} )
-
+INCLUDE_DIRECTORIES( ${VRPN_INCLUDE_DIR} )
 
 #######################################
 # Include vtkInteractionDevice code
@@ -101,6 +101,10 @@ SET( SRC vtkDeviceInteractor.h vtkDeviceInteractor.cxx
          vtkWiiMoteStyle.h vtkWiiMoteStyle.cxx
          vtkWin32RenderWindowDeviceInteractor.h vtkWin32RenderWindowDeviceInteractor.cxx )
 ADD_LIBRARY( vtkInteractionDevice ${SRC} )
+TARGET_LINK_LIBRARIES( vtkInteractionDevice 
+                       ${VTK_LIBS}                  
+                 debug ${VRPN_LIBRARY}
+             optimized ${VRPN_LIBRARY})
 
 
 #######################################
