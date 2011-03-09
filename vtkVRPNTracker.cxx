@@ -20,8 +20,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
 
-#include <vrpn_Tracker.h>
-
 // Structure to hold tracker information
 struct TrackerInformation 
 {
@@ -35,10 +33,6 @@ struct TrackerInformation
   double Acceleration[3];
   double AccelerationRotation[4];
   double AccelerationRotationDelta;
-
-  // Unit to sensor transformations.  Need one per sensor.
-  double Unit2SensorTranslation[3];
-  double Unit2SensorRotation[3];
 };
 
 class vtkVRPNTrackerInternals
@@ -62,8 +56,8 @@ vtkVRPNTracker::vtkVRPNTracker()
 
   this->Tracker = NULL;
 
-  this->SetTracker2RoomTranslation(0.0, 0.0, 0.0);
-  this->SetTracker2RoomRotation(1.0, 0.0, 0.0, 0.0);
+  this->SetTracker2WorldTranslation(0.0, 0.0, 0.0);
+  this->SetTracker2WorldRotation(1.0, 0.0, 0.0, 0.0);
 
   this->SetNumberOfSensors(1);
 }
@@ -128,23 +122,20 @@ void vtkVRPNTracker::SetNumberOfSensors(int num)
   this->Internals->Sensors.resize(num);
 
   double identityVector[3] = { 0.0, 0.0, 0.0 };
-  double identityQuaternion[4] = { 1.0, 0.0, 0.0, 0.0 };
+  double identityRotation[4] = { 1.0, 0.0, 0.0, 0.0 };
 
   for (int i = currentNum; i < num; i++) 
     {
     this->SetPosition(identityVector, i);
-    this->SetRotation(identityQuaternion, i);
+    this->SetRotation(identityRotation, i);
     
     this->SetVelocity(identityVector, i);
-    this->SetVelocityRotation(identityQuaternion, i);
+    this->SetVelocityRotation(identityRotation, i);
     this->SetVelocityRotationDelta(1.0, i);
 
     this->SetAcceleration(identityVector, i);
-    this->SetAccelerationRotation(identityQuaternion, i);
+    this->SetAccelerationRotation(identityRotation, i);
     this->SetAccelerationRotationDelta(1.0, i);
-
-    this->SetUnit2SensorTranslation(identityVector, i);
-    this->SetUnit2SensorRotation(identityQuaternion, i);
     }
 }
 
@@ -269,36 +260,6 @@ double vtkVRPNTracker::GetAccelerationRotationDelta(int sensor)
 }
 
 //----------------------------------------------------------------------------
-void vtkVRPNTracker::SetUnit2SensorTranslation(double* translation, int sensor)
-{
-  for (int i = 0; i < 3; i++)
-    {
-    this->Internals->Sensors[sensor].Unit2SensorTranslation[i] = translation[i];
-    }
-}
-
-//----------------------------------------------------------------------------
-double* vtkVRPNTracker::GetUnit2SensorTranslation(int sensor)
-{
-  return this->Internals->Sensors[sensor].Unit2SensorTranslation;
-}
-
-//----------------------------------------------------------------------------
-void vtkVRPNTracker::SetUnit2SensorRotation(double* rotation, int sensor)
-{
-  for (int i = 0; i < 4; i++)
-    {
-    this->Internals->Sensors[sensor].Unit2SensorRotation[i] = rotation[i];
-    }
-}
-
-//----------------------------------------------------------------------------
-double* vtkVRPNTracker::GetUnit2SensorRotation(int sensor)
-{
-  return this->Internals->Sensors[sensor].Unit2SensorRotation;
-}
-
-//----------------------------------------------------------------------------
 void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
   vtkVRPNTracker* tracker = static_cast<vtkVRPNTracker*>(userData);
 
@@ -307,7 +268,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     // Transform the position
     double pos[3];
     double t2wTrans[3];
-    tracker->GetTracker2RoomTranslation(t2wTrans);
+    tracker->GetTracker2WorldTranslation(t2wTrans);
     for (int i = 0; i < 3; i++) {
         pos[i] = t.pos[i] + t2wTrans[i];
     }
@@ -321,14 +282,14 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     vtkQuat[1] = t.quat[0];
     vtkQuat[2] = t.quat[1];
     vtkQuat[3] = t.quat[2];
-    
+
     // Transform the rotation via matrix operations.  
     // Would be nice if VTK had quaternion operations instead...
     double rot[3][3];
     vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
 
     double t2wRot[3][3];
-    vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2RoomRotation(), t2wRot);
+    vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
 
     vtkMath::Multiply3x3(rot, t2wRot, rot);
 
@@ -350,10 +311,10 @@ void VRPN_CALLBACK HandleVelocity(void* userData, const vrpn_TRACKERVELCB t) {
     
     // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
     double vtkQuat[4];
-    vtkQuat[0] = t.vel_quat[3];
-    vtkQuat[1] = t.vel_quat[0];
-    vtkQuat[2] = t.vel_quat[1];
-    vtkQuat[3] = t.vel_quat[2];
+    vtkQuat[0] = t.vel_quat[1];
+    vtkQuat[1] = t.vel_quat[2];
+    vtkQuat[2] = t.vel_quat[3];
+    vtkQuat[3] = t.vel_quat[0];
     tracker->SetVelocityRotation(vtkQuat, t.sensor);
 
     // Set the velocity rotation for this sensor
@@ -375,10 +336,10 @@ void VRPN_CALLBACK HandleAcceleration(void* userData, const vrpn_TRACKERACCCB t)
     
     // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
     double vtkQuat[4];
-    vtkQuat[0] = t.acc_quat[3];
-    vtkQuat[1] = t.acc_quat[0];
-    vtkQuat[2] = t.acc_quat[1];
-    vtkQuat[3] = t.acc_quat[2];
+    vtkQuat[0] = t.acc_quat[1];
+    vtkQuat[1] = t.acc_quat[2];
+    vtkQuat[2] = t.acc_quat[3];
+    vtkQuat[3] = t.acc_quat[0];
     tracker->SetAccelerationRotation(vtkQuat, t.sensor);
 
     // Set the acceleration rotation for this sensor

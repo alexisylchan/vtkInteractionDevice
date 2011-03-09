@@ -21,10 +21,6 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkRenderWindow.h"
-#include "vtkRenderer.h"
-#include "vtkVRPNAnalog.h"
-#include "vtkVRPNAnalogOutput.h"
-#include "vtkVRPNButton.h"
 
 vtkStandardNewMacro(vtkWiiMoteStyleCamera);
 vtkCxxRevisionMacro(vtkWiiMoteStyleCamera, "$Revision: 1.0 $");

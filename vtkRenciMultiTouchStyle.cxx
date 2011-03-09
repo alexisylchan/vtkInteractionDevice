@@ -16,10 +16,6 @@
 
 #include "vtkRenciMultiTouchStyle.h"
 
-#include "vtkCallbackCommand.h"
-
-#include "vtkRenciMultiTouch.h"
-
 vtkCxxRevisionMacro(vtkRenciMultiTouchStyle, "$Revision: 1.0 $");
 
 //----------------------------------------------------------------------------

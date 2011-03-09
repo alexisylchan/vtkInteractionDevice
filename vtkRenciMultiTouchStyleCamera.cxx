@@ -20,8 +20,6 @@
 #include "vtkInteractorObserver.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
-#include "vtkRenciMultiTouch.h"
-#include "vtkRenderer.h"
 #include "vtkstd/string"
 #include "vtkstd/vector"
 

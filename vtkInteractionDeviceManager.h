@@ -33,8 +33,8 @@
 
 #include "vtkObject.h"
 
-class vtkDeviceInteractor;
-class vtkRenderWindowInteractor;
+#include "vtkDeviceInteractor.h"
+#include "vtkRenderWindowInteractor.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkInteractionDeviceManager : public vtkObject
 {

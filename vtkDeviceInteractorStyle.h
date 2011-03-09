@@ -31,8 +31,8 @@
 
 #include "vtkObject.h"
 
-class vtkCallbackCommand;
-class vtkRenderer;
+#include "vtkCallbackCommand.h"
+#include "vtkRenderer.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkDeviceInteractorStyle : public vtkObject
 {
@@ -46,7 +46,7 @@ public:
 
   // Description:
   // Set the renderer being used
-  void SetRenderer(vtkRenderer*);
+  void SetRenderer(vtkRenderer* renderer);
 
 protected:
   vtkDeviceInteractorStyle();

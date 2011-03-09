@@ -16,10 +16,8 @@
 
 #include "vtkInteractionDeviceManager.h"
 
-#include "vtkDeviceInteractor.h"
 #include "vtkGraphicsFactory.h"
 #include "vtkObjectFactory.h"
-#include "vtkRenderWindowInteractor.h"
 
 // Include platform-specific headers via code borrowed from vtkGraphicsFactory.h
 

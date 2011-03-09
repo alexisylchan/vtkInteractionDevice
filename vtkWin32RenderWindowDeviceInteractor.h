@@ -32,7 +32,7 @@
 
 #include "vtkWin32RenderWindowInteractor.h"
 
-class vtkDeviceInteractor;
+#include "vtkDeviceInteractor.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkWin32RenderWindowDeviceInteractor : public vtkWin32RenderWindowInteractor
 {
@@ -49,7 +49,7 @@ public:
 
   // Description:
   // Sets the device interactor to use
-  void SetDeviceInteractor(vtkDeviceInteractor*);
+  void SetDeviceInteractor(vtkDeviceInteractor* interactor);
 
 protected:
   vtkWin32RenderWindowDeviceInteractor();

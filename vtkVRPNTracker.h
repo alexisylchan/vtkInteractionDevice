@@ -29,7 +29,7 @@
 
 #include "vtkVRPNDevice.h"
 
-class vrpn_Tracker_Remote;
+#include <vrpn_Tracker.h>
 
 // Holds vtkstd member variables, which must be hidden
 class vtkVRPNTrackerInternals;
@@ -55,44 +55,36 @@ public:
 
   // Description:
   // The number of sensors to use
-  virtual void SetNumberOfSensors(int num);
-  virtual int GetNumberOfSensors();
+  void SetNumberOfSensors(int num);
+  int GetNumberOfSensors();
 
   // Description:
-  // Set/Get the tracker information.  
-  // Can't use built-in VTK macros, as we need to index the sensor.
-  // Can't use our own macros, as we'd need to access the Internals
-  // from a header file.
+  // Transformation from tracker space to world space
+  vtkSetVector3Macro(Tracker2WorldTranslation,double);
+  vtkGetVector3Macro(Tracker2WorldTranslation,double);
+  vtkSetVector4Macro(Tracker2WorldRotation,double);
+  vtkGetVector4Macro(Tracker2WorldRotation,double);
+
+  // Description:
+  // Set/Get the tracker information
   void SetPosition(double* position, int sensor = 0);
-  double *GetPosition(int sensor = 0);
+  double* GetPosition(int sensor = 0);
   void SetRotation(double* rotation, int sensor = 0);
-  double *GetRotation(int sensor = 0);
+  double* GetRotation(int sensor = 0);
 
   void SetVelocity(double* velocity, int sensor = 0);
-  double *GetVelocity(int sensor = 0);
+  double* GetVelocity(int sensor = 0);
   void SetVelocityRotation(double* rotation, int sensor = 0);
-  double *GetVelocityRotation(int sensor = 0);
+  double* GetVelocityRotation(int sensor = 0);
   void SetVelocityRotationDelta(double delta, int sensor = 0);
   double GetVelocityRotationDelta(int sensor = 0);
 
   void SetAcceleration(double* acceleration, int sensor = 0);
-  double *GetAcceleration(int sensor = 0);
+  double* GetAcceleration(int sensor = 0);
   void SetAccelerationRotation(double* rotation, int sensor = 0);
-  double *GetAccelerationRotation(int sensor = 0);
+  double* GetAccelerationRotation(int sensor = 0);
   void SetAccelerationRotationDelta(double delta, int sensor = 0);
   double GetAccelerationRotationDelta(int sensor = 0);
-
-  void SetUnit2SensorTranslation(double* translation, int sensor = 0);
-  double *GetUnit2SensorTranslation(int sensor = 0);
-  void SetUnit2SensorRotation(double* rotation, int sensor = 0);
-  double *GetUnit2SensorRotation(int sensor = 0);
-
-  // Description:
-  // Transformation from tracker space to room space
-  vtkSetVector3Macro(Tracker2RoomTranslation,double);
-  vtkGetVector3Macro(Tracker2RoomTranslation,double);
-  vtkSetVector4Macro(Tracker2RoomRotation,double);
-  vtkGetVector4Macro(Tracker2RoomRotation,double);
 
 protected:
   vtkVRPNTracker();
@@ -100,8 +92,8 @@ protected:
 
   vrpn_Tracker_Remote* Tracker;
 
-  double Tracker2RoomTranslation[3];
-  double Tracker2RoomRotation[4];
+  double Tracker2WorldTranslation[3];
+  double Tracker2WorldRotation[4];
 
   vtkVRPNTrackerInternals* Internals;
 

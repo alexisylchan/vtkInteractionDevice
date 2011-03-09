@@ -30,12 +30,10 @@
 
 #include "vtkInteractionDeviceConfigure.h"
 
-#include "vtkObject.h"
+#include "vtkDeviceInteractorStyle.h"
+#include "vtkInteractionDevice.h"
 
-class vtkDeviceInteractorStyle;
-class vtkInteractionDevice;
-
-// Holds vtkstd member variables, which should be hidden
+// Holds vtkstd member variables, which must be hidden
 class vtkDeviceInteractorInternals;
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkDeviceInteractor : public vtkObject

@@ -16,14 +16,7 @@
 
 #include "vtkWiiMoteStyle.h"
 
-#include "vtkCallbackCommand.h"
-#include "vtkVRPNAnalog.h"
-#include "vtkVRPNAnalogOutput.h"
-#include "vtkVRPNButton.h"
-
 vtkCxxRevisionMacro(vtkWiiMoteStyle, "$Revision: 1.0 $");
-
-vtkCxxSetObjectMacro(vtkWiiMoteStyle, AnalogOutput, vtkVRPNAnalogOutput);
 
 //----------------------------------------------------------------------------
 vtkWiiMoteStyle::vtkWiiMoteStyle() 
@@ -56,6 +49,29 @@ void vtkWiiMoteStyle::SetButton(vtkVRPNButton* button)
     button->AddObserver(vtkVRPNDevice::ButtonEvent, this->DeviceCallback);
     }
 } 
+
+//----------------------------------------------------------------------------
+void vtkWiiMoteStyle::SetAnalogOutput(vtkVRPNAnalogOutput* analogOutput)
+{  
+  if (this->AnalogOutput == analogOutput)
+    {
+    return;
+    }
+
+  if (this->AnalogOutput != NULL) 
+    {
+    this->AnalogOutput->UnRegister(this);
+    }
+
+  this->AnalogOutput = analogOutput;
+
+  if (this->AnalogOutput != NULL) 
+    {
+    this->AnalogOutput->Register(this);
+    }
+
+  this->Modified();
+}
 
 //----------------------------------------------------------------------------
 void vtkWiiMoteStyle::PrintSelf(ostream& os, vtkIndent indent)

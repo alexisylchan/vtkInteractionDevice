@@ -29,7 +29,7 @@
 
 #include "vtkDeviceInteractorStyle.h"
 
-class vtkVRPNTracker;
+#include "vtkVRPNTracker.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkVRPNTrackerStyleCamera : public vtkDeviceInteractorStyle
 {

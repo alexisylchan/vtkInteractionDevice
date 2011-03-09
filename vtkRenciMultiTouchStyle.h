@@ -29,7 +29,7 @@
 
 #include "vtkDeviceInteractorStyle.h"
 
-class vtkRenciMultiTouch;
+#include "vtkRenciMultiTouch.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkRenciMultiTouchStyle : public vtkDeviceInteractorStyle
 {

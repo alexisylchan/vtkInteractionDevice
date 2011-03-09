@@ -30,9 +30,9 @@
 
 #include "vtkDeviceInteractorStyle.h"
 
-class vtkVRPNAnalog;
-class vtkVRPNAnalogOutput;
-class vtkVRPNButton;
+#include "vtkVRPNAnalog.h"
+#include "vtkVRPNAnalogOutput.h"
+#include "vtkVRPNButton.h"
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkWiiMoteStyle : public vtkDeviceInteractorStyle
 {

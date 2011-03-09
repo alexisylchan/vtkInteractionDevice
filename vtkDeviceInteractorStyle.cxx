@@ -16,12 +16,7 @@
 
 #include "vtkDeviceInteractorStyle.h"
 
-#include "vtkCallbackCommand.h"
-#include "vtkRenderer.h"
-
 vtkCxxRevisionMacro(vtkDeviceInteractorStyle, "$Revision: 1.0 $");
-
-vtkCxxSetObjectMacro(vtkDeviceInteractorStyle, Renderer, vtkRenderer);
 
 //----------------------------------------------------------------------------
 vtkDeviceInteractorStyle::vtkDeviceInteractorStyle() 
@@ -40,6 +35,29 @@ vtkDeviceInteractorStyle::~vtkDeviceInteractorStyle()
 
   this->SetRenderer(NULL);
 }
+
+//----------------------------------------------------------------------------
+void vtkDeviceInteractorStyle::SetRenderer(vtkRenderer* renderer)
+{  
+  if (this->Renderer == renderer)
+    {
+    return;
+    }
+
+  if (this->Renderer != NULL) 
+    {
+    this->Renderer->UnRegister(this);
+    }
+
+  this->Renderer = renderer;
+
+  if (this->Renderer != NULL) 
+    {
+    this->Renderer->Register(this);
+    }
+
+  this->Modified();
+} 
 
 //----------------------------------------------------------------------------
 void vtkDeviceInteractorStyle::ProcessEvents(vtkObject* caller, 

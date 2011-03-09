@@ -19,8 +19,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
 
-#include <vrpn_Button.h>
-
 class vtkVRPNButtonInternals
 {
 public:

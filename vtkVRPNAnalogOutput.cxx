@@ -19,8 +19,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
 
-#include <vrpn_Analog_Output.h>
-
 vtkCxxRevisionMacro(vtkVRPNAnalogOutput, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkVRPNAnalogOutput);
 

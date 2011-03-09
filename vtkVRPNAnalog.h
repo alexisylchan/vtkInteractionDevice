@@ -29,7 +29,7 @@
 
 #include "vtkVRPNDevice.h"
 
-class vrpn_Analog_Remote;
+#include <vrpn_Analog.h>
 
 // Holds vtkstd member variables, which must be hidden
 class vtkVRPNAnalogInternals;

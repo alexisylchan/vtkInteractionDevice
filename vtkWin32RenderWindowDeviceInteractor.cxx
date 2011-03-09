@@ -17,15 +17,12 @@
 #include "vtkWin32RenderWindowDeviceInteractor.h"
 
 #include "vtkCommand.h"
-#include "vtkDeviceInteractor.h"
 #include "vtkObjectFactory.h"
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
 vtkCxxRevisionMacro(vtkWin32RenderWindowDeviceInteractor, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkWin32RenderWindowDeviceInteractor);
 #endif
-
-vtkCxxSetObjectMacro(vtkWin32RenderWindowDeviceInteractor, DeviceInteractor, vtkDeviceInteractor);
 
 //----------------------------------------------------------------------------
 vtkWin32RenderWindowDeviceInteractor::vtkWin32RenderWindowDeviceInteractor() 
@@ -74,6 +71,30 @@ void vtkWin32RenderWindowDeviceInteractor::Start()
       }
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkWin32RenderWindowDeviceInteractor::SetDeviceInteractor(vtkDeviceInteractor* interactor)
+{
+  if (this->DeviceInteractor == interactor) 
+    {
+    return;
+    }
+
+  if (this->DeviceInteractor != NULL)
+    {  
+    this->DeviceInteractor->UnRegister(this);
+    }
+
+  this->DeviceInteractor = interactor;
+
+  if (this->DeviceInteractor != NULL) 
+    {
+    this->DeviceInteractor->Register(this);
+    }
+
+  this->Modified();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkWin32RenderWindowDeviceInteractor::PrintSelf(ostream& os, vtkIndent indent)

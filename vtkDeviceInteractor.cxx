@@ -17,8 +17,6 @@
 #include "vtkDeviceInteractor.h"
 
 #include "vtkCommand.h"
-#include "vtkDeviceInteractorStyle.h"
-#include "vtkInteractionDevice.h"
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
 

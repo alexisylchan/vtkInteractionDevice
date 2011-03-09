@@ -29,7 +29,7 @@
 
 #include "vtkVRPNDevice.h"
 
-class vrpn_Button_Remote;
+#include <vrpn_Button.h>
 
 // Holds vtkstd member variables, which must be hidden
 class vtkVRPNButtonInternals;

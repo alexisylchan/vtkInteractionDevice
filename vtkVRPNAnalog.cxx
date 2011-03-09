@@ -19,8 +19,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
 
-#include <vrpn_Analog.h>
-
 class vtkVRPNAnalogInternals 
 {
 public:

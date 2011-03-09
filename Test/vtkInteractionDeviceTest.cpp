@@ -18,6 +18,8 @@
 
 
 #include <vtkActor.h>
+#include <vtkAxes.h>
+#include <vtkCommand.h>
 #include <vtkConeSource.h>
 #include <vtkDeviceInteractor.h>
 #include <vtkInteractionDeviceManager.h>
@@ -74,7 +76,7 @@ void main(int argc, char* argv[]) {
         // A vtkInteractionDevice, such as a vtkVRPNTracker, receives updates from an external device
         device1 = vtkVRPNTracker::New();
         vtkVRPNTracker* tracker = (vtkVRPNTracker*)device1;
-        tracker->SetDeviceName("tracker@localhost");
+        tracker->SetDeviceName("Tracker0@tracker1-cs:3883");
         tracker->Initialize();
 
         // A vtkDeviceInteractorStyle, such as vtkVRPNTrackerStyleCamera, listens for events from 
