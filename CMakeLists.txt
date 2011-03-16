@@ -96,7 +96,9 @@ SET( SRC vtkDeviceInteractor.h vtkDeviceInteractor.cxx
          vtkVRPNButton.h vtkVRPNButton.cxx
          vtkVRPNDevice.h vtkVRPNDevice.cxx
          vtkVRPNTracker.h vtkVRPNTracker.cxx
+         vtkVRPNTrackerCustomSensor.h vtkVRPNTrackerCustomSensor.cxx
          vtkVRPNTrackerStyleCamera.h vtkVRPNTrackerStyleCamera.cxx
+         vtkVRPNTrackerCustomSensorStyleCamera.h vtkVRPNTrackerCustomSensorStyleCamera.cxx
          vtkWiiMoteStyleCamera.h vtkWiiMoteStyleCamera.cxx
          vtkWiiMoteStyle.h vtkWiiMoteStyle.cxx
          vtkWin32RenderWindowDeviceInteractor.h vtkWin32RenderWindowDeviceInteractor.cxx )
