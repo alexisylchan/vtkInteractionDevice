@@ -28,12 +28,15 @@
 #include "vtkInteractionDeviceConfigure.h"
 
 #include "vtkSpaceNavigatorStyle.h"
+#include <QObject>
 
-class VTK_INTERACTIONDEVICE_EXPORT vtkSpaceNavigatorStyleCamera : public vtkSpaceNavigatorStyle
+class VTK_INTERACTIONDEVICE_EXPORT vtkSpaceNavigatorStyleCamera : public vtkSpaceNavigatorStyle, public QObject
 {
+  Q_OBJECT
+  typedef QObject Superclass;
 public:
   static vtkSpaceNavigatorStyleCamera* New();
-  vtkTypeRevisionMacro(vtkSpaceNavigatorStyleCamera,vtkSpaceNavigatorStyle);
+ // vtkTypeRevisionMacro(vtkSpaceNavigatorStyleCamera,vtkSpaceNavigatorStyle);
   void PrintSelf(ostream&, vtkIndent); 
 
   // Description:
@@ -46,6 +49,9 @@ public:
   vtkGetMacro(TranslateSensitivity,double);
   vtkSetMacro(RotateSensitivity,double);
   vtkGetMacro(RotateSensitivity,double);
+signals:
+  void UpdateVTKObject(double XPos, double YPos, double ZPos, double XRotate, double YRotate, double ZRotate);
+
 
 protected:
   vtkSpaceNavigatorStyleCamera();

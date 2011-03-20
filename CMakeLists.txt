@@ -4,7 +4,12 @@ PROJECT( vtkInteractionDevice )
 
 SET( LIBRARY_OUTPUT_PATH "${vtkInteractionDevice_BINARY_DIR}/lib" )
 
+#######################################
+# Include Qt
+#######################################
+FIND_PACKAGE(Qt4)
 
+QT4_WRAP_CPP(MOC_SRCS vtkSpaceNavigatorStyle.h vtkSpaceNavigatorStyleCamera.h )
 #######################################
 # Include VTK
 #######################################
@@ -12,6 +17,8 @@ SET( LIBRARY_OUTPUT_PATH "${vtkInteractionDevice_BINARY_DIR}/lib" )
 FIND_PACKAGE( VTK REQUIRED )
 INCLUDE( ${VTK_USE_FILE} ) 
 SET( VTK_LIBS vtkRendering )
+
+
 
 #######################################
 # Static or Shared Libraries
@@ -103,13 +110,12 @@ SET( SRC vtkDeviceInteractor.h vtkDeviceInteractor.cxx
          vtkSpaceNavigatorStyleCamera.h vtkSpaceNavigatorStyleCamera.cxx
          vtkWiiMoteStyleCamera.h vtkWiiMoteStyleCamera.cxx
          vtkWiiMoteStyle.h vtkWiiMoteStyle.cxx
-         vtkWin32RenderWindowDeviceInteractor.h vtkWin32RenderWindowDeviceInteractor.cxx )
+         vtkWin32RenderWindowDeviceInteractor.h vtkWin32RenderWindowDeviceInteractor.cxx ${MOC_SRCS} )
 ADD_LIBRARY( vtkInteractionDevice ${SRC} )
 TARGET_LINK_LIBRARIES( vtkInteractionDevice 
                        ${VTK_LIBS}                  
                  debug ${VRPN_LIBRARY}
              optimized ${VRPN_LIBRARY})
-
 
 #######################################
 # Create Python library
@@ -122,7 +128,6 @@ IF( VTK_WRAP_PYTHON AND vtkInteractionDevice_WRAP_PYTHON)
   TARGET_LINK_LIBRARIES( vtkInteractionDevicePythonD vtkInteractionDevice vtkRenderingPythonD )
   TARGET_LINK_LIBRARIES( vtkInteractionDevicePython vtkInteractionDevicePythonD )
 ENDIF( VTK_WRAP_PYTHON AND vtkInteractionDevice_WRAP_PYTHON )
-
 
 #######################################
 # Include vtkInteractionDeviceTest

@@ -75,7 +75,7 @@ void vtkSpaceNavigatorStyleCamera::OnAnalog(vtkVRPNAnalog* analog)
   this->XRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationX);
   this->YRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationY);
   this->ZRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationZ);
-  cout<<"XPos "<<this->XPos<<endl;
+  emit UpdateVTKObject(XPos,YPos,ZPos,XRotate,YRotate,ZRotate);
 }
 
 //----------------------------------------------------------------------------
@@ -168,45 +168,45 @@ void vtkSpaceNavigatorStyleCamera::OnButton(vtkVRPNButton* button)
 //----------------------------------------------------------------------------
 void vtkSpaceNavigatorStyleCamera::Translate(double xDelta, double yDelta, double zDelta)
 {
-  vtkCamera* camera = this->Renderer->GetActiveCamera();
+  //vtkCamera* camera = this->Renderer->GetActiveCamera();
 
-  double viewFocus[4], focalDepth, viewPoint[3];
-  double newPickPoint[4], oldPickPoint[4], motionVector[3];
+  //double viewFocus[4], focalDepth, viewPoint[3];
+  //double newPickPoint[4], oldPickPoint[4], motionVector[3];
 
-  camera->GetFocalPoint(viewFocus);
-  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer, 
-                                               viewFocus[0], viewFocus[1], viewFocus[2], 
-                                               viewFocus);
-  focalDepth = viewFocus[2];
+  //camera->GetFocalPoint(viewFocus);
+  //vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer, 
+  //                                             viewFocus[0], viewFocus[1], viewFocus[2], 
+  //                                             viewFocus);
+  //focalDepth = viewFocus[2];
 
-  // Normalize for window size
-  int width = this->Renderer->GetRenderWindow()->GetSize()[0];
-  int height = this->Renderer->GetRenderWindow()->GetSize()[1];
-  xDelta *= width * this->PanSensitivity;
-  yDelta *= height * this->PanSensitivity;
+  //// Normalize for window size
+  //int width = this->Renderer->GetRenderWindow()->GetSize()[0];
+  //int height = this->Renderer->GetRenderWindow()->GetSize()[1];
+  //xDelta *= width * this->PanSensitivity;
+  //yDelta *= height * this->PanSensitivity;
 
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, 
-                                               xDelta, yDelta, focalDepth, 
-                                               newPickPoint);
+  //vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, 
+  //                                             xDelta, yDelta, focalDepth, 
+  //                                             newPickPoint);
 
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, 
-                                               0, 0, focalDepth, 
-                                               oldPickPoint);
+  //vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, 
+  //                                             0, 0, focalDepth, 
+  //                                             oldPickPoint);
 
-  // Camera motion is reversed
-  motionVector[0] = newPickPoint[0] - oldPickPoint[0];
-  motionVector[1] = newPickPoint[1] - oldPickPoint[1];
-  motionVector[2] = newPickPoint[2] - oldPickPoint[2];
+  //// Camera motion is reversed
+  //motionVector[0] = newPickPoint[0] - oldPickPoint[0];
+  //motionVector[1] = newPickPoint[1] - oldPickPoint[1];
+  //motionVector[2] = newPickPoint[2] - oldPickPoint[2];
 
-  camera->GetFocalPoint(viewFocus);
-  camera->GetPosition(viewPoint);
-  camera->SetFocalPoint(motionVector[0] + viewFocus[0],
-                        motionVector[1] + viewFocus[1],
-                        motionVector[2] + viewFocus[2]);
+  //camera->GetFocalPoint(viewFocus);
+  //camera->GetPosition(viewPoint);
+  //camera->SetFocalPoint(motionVector[0] + viewFocus[0],
+  //                      motionVector[1] + viewFocus[1],
+  //                      motionVector[2] + viewFocus[2]);
 
-  camera->SetPosition(motionVector[0] + viewPoint[0],
-                      motionVector[1] + viewPoint[1],
-                      motionVector[2] + viewPoint[2]);
+  //camera->SetPosition(motionVector[0] + viewPoint[0],
+  //                    motionVector[1] + viewPoint[1],
+  //                    motionVector[2] + viewPoint[2]);
 }
 
 //----------------------------------------------------------------------------
