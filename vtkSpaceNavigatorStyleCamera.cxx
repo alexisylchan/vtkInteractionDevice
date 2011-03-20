@@ -75,7 +75,7 @@ void vtkSpaceNavigatorStyleCamera::OnAnalog(vtkVRPNAnalog* analog)
   this->XRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationX);
   this->YRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationY);
   this->ZRotate = analog->GetChannel(vtkSpaceNavigatorStyle::RotationZ);
-
+  cout<<"XPos "<<this->XPos<<endl;
 }
 
 //----------------------------------------------------------------------------
