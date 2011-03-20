@@ -21,13 +21,13 @@ vtkCxxRevisionMacro(vtkSpaceNavigatorStyle, "$Revision: 1.0 $");
 //----------------------------------------------------------------------------
 vtkSpaceNavigatorStyle::vtkSpaceNavigatorStyle() 
 { 
-  this->AnalogOutput = NULL;
+ // this->AnalogOutput = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkSpaceNavigatorStyle::~vtkSpaceNavigatorStyle() 
 {
-  this->SetAnalogOutput(NULL);
+  //this->SetAnalogOutput(NULL);
 }
 
 //----------------------------------------------------------------------------
