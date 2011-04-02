@@ -46,7 +46,8 @@ public:
   enum VRPNEventIds {
       AnalogEvent = vtkCommand::UserEvent,
       ButtonEvent,
-      TrackerEvent
+      TrackerEvent,
+	  PhantomEvent
   };
   //ETX
 

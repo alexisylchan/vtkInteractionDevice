@@ -73,7 +73,7 @@ INCLUDE_DIRECTORIES( ${vtkInteractionDevice_BINARY_DIR} )
 # Include vrpn
 #######################################
 
-FIND_PATH( VRPN_INCLUDE_DIR vrpnBaseClass.h )
+FIND_PATH( VRPN_INCLUDE_DIR vrpnBaseClass.h vrpn_Phantom.h )
 find_library(VRPN_LIBRARY vrpn)
 
 INCLUDE_DIRECTORIES( ${VRPN_INCLUDE_DIR} )
@@ -97,6 +97,7 @@ SET( SRC vtkDeviceInteractor.h vtkDeviceInteractor.cxx
          vtkVRPNDevice.h vtkVRPNDevice.cxx
          vtkVRPNTracker.h vtkVRPNTracker.cxx
          vtkVRPNTrackerCustomSensor.h vtkVRPNTrackerCustomSensor.cxx
+         vtkVRPNPhantom.h vtkVRPNPhantom.cxx         
          vtkVRPNTrackerStyleCamera.h vtkVRPNTrackerStyleCamera.cxx
          vtkVRPNTrackerCustomSensorStyleCamera.h vtkVRPNTrackerCustomSensorStyleCamera.cxx
          vtkSpaceNavigatorStyle.h vtkSpaceNavigatorStyle.cxx
