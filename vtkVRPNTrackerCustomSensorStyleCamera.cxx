@@ -62,23 +62,27 @@ void vtkVRPNTrackerCustomSensorStyleCamera::OnTracker(vtkVRPNTrackerCustomSensor
   vtkCamera* camera = this->Renderer->GetActiveCamera();
 
   // Get the rotation matrix
-  double matrix[3][3];
-  vtkMath::QuaternionToMatrix3x3(tracker->GetRotation(), matrix);
+  double rotMat[3][3];
+  vtkMath::QuaternionToMatrix3x3(tracker->GetRotation(), rotMat);
+  camera->SetHeadPose(rotMat[0][0], rotMat[0][1],rotMat[0][2], tracker->GetPosition()[0]*1,
+                          rotMat[1][0], rotMat[1][1],rotMat[1][2], tracker->GetPosition()[1]*1,
+                          rotMat[2][0], rotMat[2][1],rotMat[2][2], tracker->GetPosition()[2]*1,
+                          0.0, 0.0, 0.0, 1.0 );
+  
+  //// Calculate the view direction
+  //double forward[3] = { 0.0, 0.0, 1.0 };
+  //vtkMath::Multiply3x3(matrix, forward, forward);
+  //for (int i = 0; i < 3; i++) forward[i] += tracker->GetPosition()[i];
 
-  // Calculate the view direction
-  double forward[3] = { 0.0, 0.0, 1.0 };
-  vtkMath::Multiply3x3(matrix, forward, forward);
-  for (int i = 0; i < 3; i++) forward[i] += tracker->GetPosition()[i];
+  //// Calculate the up vector
+  //double up[3] = { 0.0, 1.0, 0.0 };
+  //vtkMath::Multiply3x3(matrix, up, up);
 
-  // Calculate the up vector
-  double up[3] = { 0.0, 1.0, 0.0 };
-  vtkMath::Multiply3x3(matrix, up, up);
-
-  // Set camera parameters
-  camera->SetPosition(tracker->GetPosition());
-  camera->SetFocalPoint(forward);
-  camera->SetViewUp(up);
-  camera->Modified();
+  //// Set camera parameters
+  //camera->SetPosition(tracker->GetPosition());
+  //camera->SetFocalPoint(forward);
+  //camera->SetViewUp(up);
+  //camera->Modified();
 
   // Render
   this->Renderer->ResetCameraClippingRange();
