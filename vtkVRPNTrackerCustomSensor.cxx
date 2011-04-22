@@ -331,8 +331,9 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     // Set the rotation for this sensor
     tracker->SetRotation(vtkQuat);
 	
-	
 	vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
+	if (tracker->GetSensorIndex() == 0)
+	{
 	t2wmatrix->SetElement(0,0,0); 
 	t2wmatrix->SetElement(0,1,-1); 
 	t2wmatrix->SetElement(0,2,0); 
@@ -343,6 +344,20 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	t2wmatrix->SetElement(2,1,0); 
 	t2wmatrix->SetElement(2,2,0);  
 	t2wmatrix->MultiplyPoint(pos,pos);
+	}
+	else if (tracker->GetSensorIndex() == 1)
+	{
+	t2wmatrix->SetElement(0,0,1); 
+	t2wmatrix->SetElement(0,1,0); 
+	t2wmatrix->SetElement(0,2,0); 
+	t2wmatrix->SetElement(1,0,0); 
+	t2wmatrix->SetElement(1,1,0); 
+	t2wmatrix->SetElement(1,2,1); 
+	t2wmatrix->SetElement(2,0,0); 
+	t2wmatrix->SetElement(2,1,-1); 
+	t2wmatrix->SetElement(2,2,0);  
+	t2wmatrix->MultiplyPoint(pos,pos);
+	}
     // Set the position for this sensor
     tracker->SetPosition(pos);
 
