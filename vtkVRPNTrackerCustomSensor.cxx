@@ -358,7 +358,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	t2wmatrix->SetElement(2,1,-1); 
 	t2wmatrix->SetElement(2,2,0);  
 	t2wmatrix->MultiplyPoint(pos,pos);
-	}s
+	} 
     // Set the position for this sensor
     tracker->SetPosition(pos);
 
