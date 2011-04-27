@@ -101,7 +101,6 @@ int vtkVRPNPhantom::Initialize()
   // Create the VRPN Phantom remote 
   this->PhantomTracker = new vrpn_Tracker_Remote(this->DeviceName);
 
-
   // Set up the Phantom callbacks
   if (this->PhantomTracker->register_change_handler(this, HandlePosition) == -1 ||
       this->PhantomTracker->register_change_handler(this, HandleVelocity) == -1 ||
