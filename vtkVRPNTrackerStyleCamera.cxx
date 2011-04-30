@@ -20,6 +20,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkRenderWindow.h"
+#include "vtkTransform.h"
 
 vtkStandardNewMacro(vtkVRPNTrackerStyleCamera);
 vtkCxxRevisionMacro(vtkVRPNTrackerStyleCamera, "$Revision: 1.0 $");
@@ -61,11 +62,42 @@ void vtkVRPNTrackerStyleCamera::OnTracker(vtkVRPNTracker* tracker)
 {
   vtkCamera* camera = this->Renderer->GetActiveCamera();
 
-  // Get the rotation matrix
+ //  Get the rotation matrix
   double matrix[3][3];
   vtkMath::QuaternionToMatrix3x3(tracker->GetRotation(), matrix);
+ // vtkMatrix4x4* rotmatrix = vtkMatrix4x4::New();
+ // rotmatrix->SetElement(0,0,matrix[0][0]);
+ // rotmatrix->SetElement(0,1,matrix[0][1]);
+ // rotmatrix->SetElement(0,2,matrix[0][2]);
+ // rotmatrix->SetElement(0,3,tracker->GetPosition()[0]);
+ // rotmatrix->SetElement(1,0,matrix[1][0]);
+ // rotmatrix->SetElement(1,1,matrix[1][1]);
+ // rotmatrix->SetElement(1,2,matrix[1][2]);
+ // rotmatrix->SetElement(1,3,tracker->GetPosition()[1]);
+ // rotmatrix->SetElement(2,0,matrix[2][0]);
+ // rotmatrix->SetElement(2,1,matrix[2][1]);
+ // rotmatrix->SetElement(2,2,matrix[2][2]);
+ // rotmatrix->SetElement(2,3,tracker->GetPosition()[2]);
+ // rotmatrix->SetElement(3,0,0);
+ // rotmatrix->SetElement(3,1,0);
+ // rotmatrix->SetElement(3,2,0);
+ // rotmatrix->SetElement(3,3,1);
+ // vtkTransform* userTransform = vtkTransform::New();
+ // userTransform->Concatenate(rotmatrix);
+ // camera->SetUserTransform(userTransform);
 
-  // Calculate the view direction
+  
+  //vtkCamera* camera = this->Renderer->GetActiveCamera();
+
+  //// Get the rotation matrix
+  //double rotMat[3][3];
+  //vtkMath::QuaternionToMatrix3x3(tracker->GetRotation(), rotMat);
+  //camera->SetHeadPose(rotMat[0][0], rotMat[0][1],rotMat[0][2], tracker->GetPosition()[0]*1,
+  //                        rotMat[1][0], rotMat[1][1],rotMat[1][2], tracker->GetPosition()[1]*1,
+  //                        rotMat[2][0], rotMat[2][1],rotMat[2][2], tracker->GetPosition()[2]*1,
+  //                        0.0, 0.0, 0.0, 1.0 );
+
+   // Calculate the view direction
   double forward[3] = { 0.0, 0.0, 1.0 };
   vtkMath::Multiply3x3(matrix, forward, forward);
   for (int i = 0; i < 3; i++) forward[i] += tracker->GetPosition()[i];
@@ -82,7 +114,6 @@ void vtkVRPNTrackerStyleCamera::OnTracker(vtkVRPNTracker* tracker)
 
   // Render
   this->Renderer->ResetCameraClippingRange();
-  // Render() will be called in the interactor
 }
 
 //----------------------------------------------------------------------------

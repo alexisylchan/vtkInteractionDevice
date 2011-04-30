@@ -19,6 +19,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
+#include "vtkMatrix4x4.h"
 
 // Structure to hold tracker information
 struct TrackerInformation 
@@ -265,16 +266,6 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 
   if (t.sensor < tracker->GetNumberOfSensors()) 
     {
-    // Transform the position
-    double pos[3];
-    double t2wTrans[3];
-    tracker->GetTracker2WorldTranslation(t2wTrans);
-    for (int i = 0; i < 3; i++) {
-        pos[i] = t.pos[i] + t2wTrans[i];
-    }
-
-    // Set the position for this sensor
-    tracker->SetPosition(pos, t.sensor);
 
     // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
     double vtkQuat[4];
@@ -297,6 +288,30 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 
     // Set the rotation for this sensor
     tracker->SetRotation(vtkQuat, t.sensor);
+    // Transform the position
+    double pos[3];
+    double t2wTrans[3];
+    tracker->GetTracker2WorldTranslation(t2wTrans);
+    for (int i = 0; i < 3; i++) {
+        pos[i] = (t.pos[i] + t2wTrans[i])*1;
+    }
+    vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
+		//-1 0 0
+		//0  0 -1
+		//0  1 0
+	t2wmatrix->SetElement(0,0,-1); 
+	t2wmatrix->SetElement(0,1,0); 
+	t2wmatrix->SetElement(0,2,0); 
+	t2wmatrix->SetElement(1,0,0); 
+	t2wmatrix->SetElement(1,1,0); 
+	t2wmatrix->SetElement(1,2,-1); 
+	t2wmatrix->SetElement(2,0,0); 
+	t2wmatrix->SetElement(2,1,-1); 
+	t2wmatrix->SetElement(2,2,0);  
+	t2wmatrix->MultiplyPoint(pos,pos);
+
+    // Set the position for this sensor
+    tracker->SetPosition(pos, t.sensor);
     }
 }
 
