@@ -309,32 +309,13 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
         pos[i] = t.pos[i] + t2wTrans[i];
     } 
 
-    // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
-    double vtkQuat[4];
-    vtkQuat[0] = t.quat[3];
-    vtkQuat[1] = t.quat[0];
-    vtkQuat[2] = t.quat[1];
-    vtkQuat[3] = t.quat[2];
-
-    // Transform the rotation via matrix operations.  
-    // Would be nice if VTK had quaternion operations instead...
-    double rot[3][3];
-    vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
-
-    double t2wRot[3][3];
-    vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
-
-    vtkMath::Multiply3x3(rot, t2wRot, rot);
-
-    vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);
-
-    // Set the rotation for this sensor
-    tracker->SetRotation(vtkQuat);
+   
 	
 	//Multiply tracker position change by Tracker-Space to World-Space rotation
 	vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
-	if (tracker->GetSensorIndex() == 0)
-	{
+		//0 -1 0
+		//0  0 1
+		//-1 0 0
 	t2wmatrix->SetElement(0,0,0); 
 	t2wmatrix->SetElement(0,1,-1); 
 	t2wmatrix->SetElement(0,2,0); 
@@ -345,23 +326,30 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	t2wmatrix->SetElement(2,1,0); 
 	t2wmatrix->SetElement(2,2,0);  
 	t2wmatrix->MultiplyPoint(pos,pos);
-	}
-	else if (tracker->GetSensorIndex() == 1)
-	{
-	t2wmatrix->SetElement(0,0,1); 
-	t2wmatrix->SetElement(0,1,0); 
-	t2wmatrix->SetElement(0,2,0); 
-	t2wmatrix->SetElement(1,0,0); 
-	t2wmatrix->SetElement(1,1,0); 
-	t2wmatrix->SetElement(1,2,1); 
-	t2wmatrix->SetElement(2,0,0); 
-	t2wmatrix->SetElement(2,1,-1); 
-	t2wmatrix->SetElement(2,2,0);  
-	t2wmatrix->MultiplyPoint(pos,pos);
-	} 
     // Set the position for this sensor
     tracker->SetPosition(pos);
 
+ // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
+    double vtkQuat[4];
+    vtkQuat[0] = t.quat[3];
+    vtkQuat[1] = t.quat[0];
+    vtkQuat[2] = t.quat[1];
+    vtkQuat[3] = t.quat[2];
+
+    // Transform the rotation via matrix operations.  
+    // Would be nice if VTK had quaternion operations instead...
+    double rot[3][3];
+
+	
+    vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
+
+    double t2wRot[3][3]; 
+    vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
+    vtkMath::Multiply3x3(rot, t2wRot, rot); 
+    vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);
+
+    // Set the rotation for this sensor
+    tracker->SetRotation(vtkQuat);
     }
 }
 
