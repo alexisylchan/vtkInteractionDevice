@@ -344,6 +344,9 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
 
     double t2wRot[3][3]; 
+	//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
+	// To ParaView Space. The original Tracker2WorldRotation was used to denote rotation from
+	// Head to Eye.
     vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
     vtkMath::Multiply3x3(rot, t2wRot, rot); 
     vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);

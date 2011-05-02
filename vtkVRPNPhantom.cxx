@@ -19,6 +19,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkstd/vector"
+#include "vtkMatrix4x4.h"
 
 // Structure to hold Phantom information
 struct PhantomInformation 
@@ -289,10 +290,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     Phantom->GetPhantom2WorldTranslation(t2wTrans);
     for (int i = 0; i < 3; i++) {
         pos[i] = t.pos[i] + t2wTrans[i];
-    }
-
-    // Set the position for this sensor
-    Phantom->SetPosition(pos, t.sensor);
+    } 
 
     // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
     double vtkQuat[4];
@@ -315,6 +313,21 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 
     // Set the rotation for this sensor
     Phantom->SetRotation(vtkQuat, t.sensor);
+
+	vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New(); 
+	t2wmatrix->SetElement(0,0,t2wRot[0][0]); 
+	t2wmatrix->SetElement(0,1,t2wRot[0][1]); 
+	t2wmatrix->SetElement(0,2,t2wRot[0][2]); 
+	t2wmatrix->SetElement(1,0,t2wRot[1][0]); 
+	t2wmatrix->SetElement(1,1,t2wRot[1][1]); 
+	t2wmatrix->SetElement(1,2,t2wRot[1][2]); 
+	t2wmatrix->SetElement(2,0,t2wRot[2][0]); 
+	t2wmatrix->SetElement(2,1,t2wRot[2][1]); 
+	t2wmatrix->SetElement(2,2,t2wRot[2][2]);  
+	t2wmatrix->MultiplyPoint(pos,pos);
+    // Set the position for this sensor
+    Phantom->SetPosition(pos, t.sensor);
+
     }
 }
 

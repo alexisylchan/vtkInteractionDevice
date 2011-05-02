@@ -62,6 +62,9 @@ public:
   // Transformation from tracker space to world space
   vtkSetVector3Macro(Tracker2WorldTranslation,double);
   vtkGetVector3Macro(Tracker2WorldTranslation,double);
+	//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
+	// To ParaView Space. The original Tracker2WorldRotation was used to denote rotation from
+	// Head to Eye.
   vtkSetVector4Macro(Tracker2WorldRotation,double);
   vtkGetVector4Macro(Tracker2WorldRotation,double);
 
