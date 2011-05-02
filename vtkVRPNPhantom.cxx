@@ -8,7 +8,7 @@
 
   License:     Licensed under the RENCI Open Source Software License v. 1.0.
                
-               See included License.txt or 
+               See included License.txt or vrpn_
                http://www.renci.org/resources/open-source-software-license
                for details.
 
@@ -52,12 +52,14 @@ class vtkVRPNPhantomInternals
 {
 public:
   vtkstd::vector<PhantomInformation> Sensors;
+  vtkstd::vector<bool> Buttons;
 };
 
 // Callbacks
 static void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t);
 static void VRPN_CALLBACK HandleVelocity(void* userData, const vrpn_TRACKERVELCB t);
 static void VRPN_CALLBACK HandleAcceleration(void* userData, const vrpn_TRACKERACCCB t);
+static void VRPN_CALLBACK HandleButton(void* userData, const vrpn_BUTTONCB b);
 
 vtkCxxRevisionMacro(vtkVRPNPhantom, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkVRPNPhantom);
@@ -110,6 +112,13 @@ int vtkVRPNPhantom::Initialize()
     vtkErrorMacro(<<"Can't register callback.");
     return 0;
     }
+
+  this->PhantomButton = new vrpn_Button_Remote(this->DeviceName);
+  if (this->PhantomButton->register_change_handler(this, HandleButton) == -1)
+  {
+    vtkErrorMacro(<<"Can't register callback.");
+    return 0;
+  }
 
   return 1;
 }
@@ -414,5 +423,56 @@ void vtkVRPNPhantom::PrintSelf(ostream& os, vtkIndent indent)
                  << ", " << this->Internals->Sensors[i].AccelerationRotation[2]
                  << ", " << this->Internals->Sensors[i].AccelerationRotation[3] << ")\n";   
     os << indent << indent << "AccelerationRotationDelta: " << this->Internals->Sensors[i].AccelerationRotationDelta << "\n";   
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkVRPNPhantom::SetNumberOfButtons(int num) 
+{
+  int currentNum = this->Internals->Buttons.size();
+
+  this->Internals->Buttons.resize(num);
+
+  for (int i = currentNum; i < num; i++) 
+    {
+    this->SetButton(i, false);
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkVRPNPhantom::GetNumberOfButtons() 
+{
+  return this->Internals->Buttons.size();
+}
+
+//----------------------------------------------------------------------------
+void vtkVRPNPhantom::SetButton(int button, bool value)
+{
+  this->Internals->Buttons[button] = value;
+}
+
+//----------------------------------------------------------------------------
+bool vtkVRPNPhantom::GetButton(int button)
+{
+  return this->Internals->Buttons[button];
+}
+
+//----------------------------------------------------------------------------
+void vtkVRPNPhantom::SetToggle(int button, bool toggle) 
+{
+  if (!this->PhantomButton) return;
+
+  if (toggle) this->PhantomButton->set_toggle(button, vrpn_BUTTON_TOGGLE_ON);
+  else this->PhantomButton->set_momentary(button);
+}
+
+
+//----------------------------------------------------------------------------
+void VRPN_CALLBACK HandleButton(void* userData, const vrpn_BUTTONCB b) {
+  vtkVRPNPhantom* Phantom = static_cast<vtkVRPNPhantom*>(userData);
+
+  if (b.button < Phantom->GetNumberOfButtons())
+    {
+    Phantom->SetButton(b.button, b.state != 0);
     }
 }

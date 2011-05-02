@@ -60,6 +60,17 @@ public:
   // The number of sensors to use
   void SetNumberOfSensors(int num);
   int GetNumberOfSensors();
+   // Description:
+  // The number of buttons to use
+  void SetNumberOfButtons(int num);
+  int GetNumberOfButtons();
+ // Description:
+  // Set/Get the button information
+  void SetButton(int button, bool value);
+  bool GetButton(int button);
+    // Description:
+  // Use toggle buttons or not.  Will have no effect until the device is initialized.
+  void SetToggle(int button, bool toggle);
 
   // Description:
   // Transformation from Phantom space to world space
