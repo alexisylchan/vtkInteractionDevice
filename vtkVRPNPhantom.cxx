@@ -53,6 +53,7 @@ class vtkVRPNPhantomInternals
 public:
   vtkstd::vector<PhantomInformation> Sensors;
   vtkstd::vector<bool> Buttons;
+  int sensorIndex;
 };
 
 // Callbacks
@@ -90,7 +91,17 @@ vtkVRPNPhantom::~vtkVRPNPhantom()
 
   delete this->Internals;
 }
+//Allows user to specify the sensor used for this phantom
+void vtkVRPNPhantom::SetSensorIndex(int sensorIndex)
+{
+	this->Internals->sensorIndex = sensorIndex;
+}
 
+//Allows VRPN Callback to identify the sensor used for this phantom
+int vtkVRPNPhantom::GetSensorIndex() 
+{
+  return this->Internals->sensorIndex;
+}
 //----------------------------------------------------------------------------
 int vtkVRPNPhantom::Initialize() 
 {

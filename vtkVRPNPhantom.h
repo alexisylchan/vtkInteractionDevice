@@ -43,7 +43,9 @@ public:
   static vtkVRPNPhantom* New();
   vtkTypeRevisionMacro(vtkVRPNPhantom,vtkVRPNDevice);
   void PrintSelf(ostream&, vtkIndent);
-
+  void SetSensorIndex(int sensorIndex);
+  int GetSensorIndex();
+  
   // Description:
   // Initialize the device
   virtual int Initialize();
