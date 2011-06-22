@@ -85,7 +85,7 @@ void vtkVRPNTrackerCustomSensorStyleCamera::OnTracker(vtkVRPNTrackerCustomSensor
   //camera->Modified();
 
   // Render
-  this->Renderer->ResetCameraClippingRange();
+  //this->Renderer->ResetCameraClippingRange();
   // Render() will be called in the interactor
 }
 
