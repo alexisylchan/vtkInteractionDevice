@@ -308,8 +308,44 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     for (int i = 0; i < 3; i++) {
         pos[i] = t.pos[i] + t2wTrans[i];
     } 
+	
+	// Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
+    double vtkQuat[4];
+    vtkQuat[0] = t.quat[3];
+    vtkQuat[1] = t.quat[0];
+    vtkQuat[2] = t.quat[1];
+    vtkQuat[3] = t.quat[2];
 
-   
+    // Transform the rotation via matrix operations.  
+    // Would be nice if VTK had quaternion operations instead...
+    double rot[3][3];
+
+	
+    vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
+
+	double new_z[3];
+	new_z[0] = rot[0][2];
+	new_z[1] = rot[1][2];
+	new_z[2] = rot[2][2];
+
+	vtkMath::Normalize(new_z);
+	vtkMath::MultiplyScalar(new_z,-0.254);
+	double center_eye[3];
+	for (int i =0; i < 3; i++)
+	{
+		center_eye[i] = pos[i]+new_z[i];
+	}
+
+	double new_y[3];
+	new_y[0] = rot[0][1];
+	new_y[1] = rot[1][1];
+	new_y[2] = rot[2][1];
+	vtkMath::Normalize(new_y);
+	vtkMath::MultiplyScalar(new_y,-0.0762);
+	for (int i = 0; i < 3; i++)
+	{
+		pos[i] = center_eye[i] + new_y[i];
+	} 
 	
 	//Multiply tracker position change by Tracker-Space to World-Space rotation
 	vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
@@ -329,19 +365,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
     // Set the position for this sensor
     tracker->SetPosition(pos);
 
- // Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
-    double vtkQuat[4];
-    vtkQuat[0] = t.quat[3];
-    vtkQuat[1] = t.quat[0];
-    vtkQuat[2] = t.quat[1];
-    vtkQuat[3] = t.quat[2];
-
-    // Transform the rotation via matrix operations.  
-    // Would be nice if VTK had quaternion operations instead...
-    double rot[3][3];
-
-	
-    vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
+ 
 
     double t2wRot[3][3]; 
 	//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
