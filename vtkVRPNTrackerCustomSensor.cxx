@@ -302,13 +302,48 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
   if (t.sensor == tracker->GetSensorIndex())
     {
     // Transform the position
-    double pos[3];
-    double t2wTrans[3];
+    double pos[4];
+	for (int i = 0; i < 3; i++)
+	{
+		pos[i] = t.pos[i];
+	}
+	pos[3] = 1;
+
+	 double t2wTrans[3];
     tracker->GetTracker2WorldTranslation(t2wTrans);
-    for (int i = 0; i < 3; i++) {
+    /*for (int i = 0; i < 3; i++) {
         pos[i] = t.pos[i] + t2wTrans[i];
-    } 
-	
+    } */
+
+
+			vtkMatrix4x4* trackerTransformM = vtkMatrix4x4::New();
+			trackerTransformM->SetElement(0,0,0);
+			trackerTransformM->SetElement(0,1,-1);
+			trackerTransformM->SetElement(0,2,0);
+			trackerTransformM->SetElement(0,3,-1*t2wTrans[1]);
+			trackerTransformM->SetElement(1,0,0);
+			trackerTransformM->SetElement(1,1,0);
+			trackerTransformM->SetElement(1,2,1);
+			trackerTransformM->SetElement(1,3, 1*t2wTrans[2]);
+			trackerTransformM->SetElement(2,0,-1);
+			trackerTransformM->SetElement(2,1,0);
+			trackerTransformM->SetElement(2,2,0); 
+			trackerTransformM->SetElement(2,3,-1*t2wTrans[0]);
+			trackerTransformM->SetElement(3,0, 0);
+			trackerTransformM->SetElement(3,1, 0 );
+			trackerTransformM->SetElement(3,2,0); 
+			trackerTransformM->SetElement(3,3,1);
+			trackerTransformM->MultiplyPoint(pos,pos);
+ for (int i = 0; i < 3; i++) {
+        pos[i] = pos[i]*1.732/0.22;
+    }  
+   
+
+	////Scale position in meters
+	//  for (int j = 0; j < 3; j++) {
+ //       pos[j] = pos[j]*0.1;
+ //   } 
+
 	// Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
     double vtkQuat[4];
     vtkQuat[0] = t.quat[3];
@@ -323,7 +358,28 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	
     vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);
 
-	double new_z[3];
+	
+	
+	////Multiply tracker position change by Tracker-Space to World-Space rotation
+	//vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
+	//	//0 -1 0
+	//	//0  0 1
+	//	//-1 0 0
+	//t2wmatrix->SetElement(0,0,0); 
+	//t2wmatrix->SetElement(0,1,-1); 
+	//t2wmatrix->SetElement(0,2,0); 
+	//t2wmatrix->SetElement(1,0,0); 
+	//t2wmatrix->SetElement(1,1,0); 
+	//t2wmatrix->SetElement(1,2,1); 
+	//t2wmatrix->SetElement(2,0,-1); 
+	//t2wmatrix->SetElement(2,1,0); 
+	//t2wmatrix->SetElement(2,2,0);  
+	//t2wmatrix->MultiplyPoint(pos,pos);
+
+
+	//pos[2] = pos[2]-0.15;
+
+	/*double new_z[3];
 	new_z[0] = rot[0][2];
 	new_z[1] = rot[1][2];
 	new_z[2] = rot[2][2];
@@ -345,27 +401,12 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	for (int i = 0; i < 3; i++)
 	{
 		pos[i] = center_eye[i] + new_y[i];
-	} 
-	
-	//Multiply tracker position change by Tracker-Space to World-Space rotation
-	vtkMatrix4x4* t2wmatrix = vtkMatrix4x4::New();
-		//0 -1 0
-		//0  0 1
-		//-1 0 0
-	t2wmatrix->SetElement(0,0,0); 
-	t2wmatrix->SetElement(0,1,-1); 
-	t2wmatrix->SetElement(0,2,0); 
-	t2wmatrix->SetElement(1,0,0); 
-	t2wmatrix->SetElement(1,1,0); 
-	t2wmatrix->SetElement(1,2,1); 
-	t2wmatrix->SetElement(2,0,-1); 
-	t2wmatrix->SetElement(2,1,0); 
-	t2wmatrix->SetElement(2,2,0);  
-	t2wmatrix->MultiplyPoint(pos,pos);
-    // Set the position for this sensor
+	} */
+
+     //Set the position for this sensor
     tracker->SetPosition(pos);
 
- 
+ // Comment out rotation because currently debugging without tracker transforms
 
     double t2wRot[3][3]; 
 	//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
