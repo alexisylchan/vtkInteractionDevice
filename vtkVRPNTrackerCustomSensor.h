@@ -35,7 +35,7 @@
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkVRPNTrackerCustomSensor : public vtkVRPNTracker
 {
-public:
+public: 
   static vtkVRPNTrackerCustomSensor* New();
   vtkTypeRevisionMacro(vtkVRPNTrackerCustomSensor,vtkVRPNTracker);
   void SetSensorIndex(int sensorIndex);
