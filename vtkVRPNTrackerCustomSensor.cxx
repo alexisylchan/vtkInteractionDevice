@@ -306,25 +306,13 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 
 
 	double start[3] = {5.525964,  2.960615,  1.256135};
-    double end[3] =   {5.424874,  2.954511,  0.927396};
-	/*double start[3] = {5.5,  2.9,  1.2};
-    double end[3] =   {5.4,  2.9,  0.9};*/
+    double end[3] =   {5.424874,  2.954511,  0.927396}; 
     double startToEndVec[4];
 	for (int i = 0; i < 3; i++)
 	{
 		 startToEndVec[i] = end[i] - start[i];
 	}
-	startToEndVec[3] =1;
-	 /*startToEndVec[0] = - 0.025;
-	startToEndVec[1] = 0;
-	startToEndVec[2] = - 0.212725 ;
-	startToEndVec[3] = 0;
-	tracker->startToEndVec[0] = - 0.025;
-	tracker->startToEndVec[1] = 0;
-	tracker->startToEndVec[2] = - 0.212725 ;
-	tracker->startToEndVec[3] = 1;*/
-
-
+	startToEndVec[3] =1;  
     // Transform the position
     double pos[4];
 	for (int i = 0; i < 3; i++)
