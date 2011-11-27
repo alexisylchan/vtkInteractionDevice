@@ -303,8 +303,76 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
   // Get the current sensor based on stored sensorIndex given by user
   if (t.sensor == tracker->GetSensorIndex())
     {
+ 
+ //   // Transform the position
+ //   double pos[4];
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	pos[i] = t.pos[i];
+	//}
+	//pos[3] = 1;
+	//// Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
+ //   double vtkQuat[4];
+ //   vtkQuat[0] = t.quat[3];
+ //   vtkQuat[1] = t.quat[0];
+ //   vtkQuat[2] = t.quat[1];
+ //   vtkQuat[3] = t.quat[2];
 
+ //   // Transform the rotation via matrix operations.  
+ //   // Would be nice if VTK had quaternion operations instead...
+ //   double rot[3][3];
 
+	//
+ //   vtkMath::QuaternionToMatrix3x3(vtkQuat, rot); 
+	//
+	// 
+
+	// 
+	////Convert & scale to screen coordinates
+ //
+	// double t2wTrans[3];
+ //   tracker->GetTracker2WorldTranslation(t2wTrans);
+	//		vtkMatrix4x4* trackerTransformM = vtkMatrix4x4::New();
+	//		trackerTransformM->SetElement(0,0,0);
+	//		trackerTransformM->SetElement(0,1,-1);
+	//		trackerTransformM->SetElement(0,2,0);
+	//		trackerTransformM->SetElement(0,3,-1*t2wTrans[1]);
+	//		trackerTransformM->SetElement(1,0,0);
+	//		trackerTransformM->SetElement(1,1,0);
+	//		trackerTransformM->SetElement(1,2,1);
+	//		trackerTransformM->SetElement(1,3, 1*t2wTrans[2]);
+	//		trackerTransformM->SetElement(2,0,-1);
+	//		trackerTransformM->SetElement(2,1,0);
+	//		trackerTransformM->SetElement(2,2,0); 
+	//		trackerTransformM->SetElement(2,3,-1*t2wTrans[0]);
+	//		trackerTransformM->SetElement(3,0, 0);
+	//		trackerTransformM->SetElement(3,1, 0 );
+	//		trackerTransformM->SetElement(3,2,0); 
+	//		trackerTransformM->SetElement(3,3,1);
+	//		trackerTransformM->MultiplyPoint(pos,pos);
+	//		double newPosition2[4];
+	//		for (int i = 0; i < 3; i++) {
+	//			pos[i] = pos[i]*1.732/0.22;//6.69/0.287; //TODO: incorporate scale in tracker2worldtranslation
+	//		}  
+ //   
+	//
+	//		tracker->SetPosition(pos);
+
+ //// Comment out rotation because currently debugging without tracker transforms
+
+ //   double t2wRot[3][3]; 
+	////Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
+	//// To ParaView Space. The original Tracker2WorldRotation was used to denote rotation from
+	//// Head to Eye.
+ //   vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
+ //   vtkMath::Multiply3x3(t2wRot, rot, rot); 
+ //   vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);
+
+ //   // Set the rotation for this sensor
+ //   tracker->SetRotation(vtkQuat);
+ //   }
+ 
+/**********************************COMMENTED OUT TO TEST KINECT*************************************/
 	double start[3] = {5.525964,  2.960615,  1.256135};
     double end[3] =   {5.424874,  2.954511,  0.927396}; 
     double startToEndVec[4];
@@ -385,7 +453,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 			trackerTransformM->MultiplyPoint(pos,pos);
 			double newPosition2[4];
 			for (int i = 0; i < 3; i++) {
-				pos[i] = pos[i]*1.732/0.22;//6.69/0.287; //TODO: incorporate scale in tracker2worldtranslation
+				pos[i] = pos[i];//6.69/0.287; //TODO: incorporate scale in tracker2worldtranslation
 			}  
     
 	
@@ -403,7 +471,9 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 
     // Set the rotation for this sensor
     tracker->SetRotation(vtkQuat);
-    }
+
+/**********************************END COMMENTED OUT TO TEST KINECT*************************************/
+	}
 }
 
 //----------------------------------------------------------------------------
