@@ -374,7 +374,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
  
 /**********************************COMMENTED OUT TO TEST KINECT*************************************/
 	double start[3] = {5.525964,  2.960615,  1.256135};
-    double end[3] =   {5.424874,  2.954511,  0.927396}; 
+    double end[3] =   {5.525964,  2.960615,   1.256135 }; /*{5.424874,  2.954511,   0.927396 }; */
     double startToEndVec[4];
 	for (int i = 0; i < 3; i++)
 	{
@@ -429,6 +429,8 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	{
 		pos[i] = pos[i] +  startToEndVec[i];
 	} 
+  
+
 	//Convert & scale to screen coordinates
  
 	 double t2wTrans[3];
@@ -449,7 +451,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 			trackerTransformM->SetElement(3,0, 0);
 			trackerTransformM->SetElement(3,1, 0 );
 			trackerTransformM->SetElement(3,2,0); 
-			trackerTransformM->SetElement(3,3,1);
+			trackerTransformM->SetElement(3,3,1); 
 			trackerTransformM->MultiplyPoint(pos,pos);
 			double newPosition2[4];
 			for (int i = 0; i < 3; i++) {

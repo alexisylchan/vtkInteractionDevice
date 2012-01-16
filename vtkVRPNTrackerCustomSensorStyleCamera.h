@@ -40,6 +40,8 @@ public:
   // Description:
   // Set the tracker receiving events from
   void SetTracker(vtkVRPNTrackerCustomSensor*);
+  void SetFrontOfMonitor(bool frontOfMonitor);
+  void SetDistanceFromRemote(double distanceFromRemote);
 
 protected:
   vtkVRPNTrackerCustomSensorStyleCamera();
@@ -48,6 +50,8 @@ protected:
   virtual void OnTracker(vtkVRPNTrackerCustomSensor*);
 
 private:
+	bool frontOfMonitor;
+	double distanceFromRemote;
   vtkVRPNTrackerCustomSensorStyleCamera(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
   void operator=(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
 };
