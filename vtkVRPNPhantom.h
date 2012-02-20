@@ -33,6 +33,8 @@
 #include <vrpn_Tracker.h>
 #include <vrpn_Button.h>
 #include <vrpn_ForceDevice.h>
+#define PHANTOM_TYPE_DESKTOP 0
+#define PHANTOM_TYPE_OMNI 1
 
 // Holds vtkstd member variables, which must be hidden
 class vtkVRPNPhantomInternals;
@@ -102,9 +104,12 @@ public:
   void SetAccelerationRotationDelta(double delta, int sensor = 0);
   double GetAccelerationRotationDelta(int sensor = 0);
 
+  void SetPhantomMockButtonAddress(const char* address);
   vrpn_Tracker_Remote* PhantomTracker;
   vrpn_Button_Remote* PhantomButton;
+  vrpn_Button_Remote* PhantomMockButton;
   vrpn_ForceDevice_Remote* PhantomForceDevice;
+  int PhantomType;
 protected:
   vtkVRPNPhantom();
   ~vtkVRPNPhantom();
@@ -114,7 +119,7 @@ protected:
   double Phantom2WorldRotation[4];
 
   vtkVRPNPhantomInternals* Internals;
-
+  char* mockButtonAddress;
 private:
   vtkVRPNPhantom(const vtkVRPNPhantom&);  // Not implemented.
   void operator=(const vtkVRPNPhantom&);  // Not implemented.

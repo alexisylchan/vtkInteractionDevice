@@ -61,7 +61,7 @@ static void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t)
 static void VRPN_CALLBACK HandleVelocity(void* userData, const vrpn_TRACKERVELCB t);
 static void VRPN_CALLBACK HandleAcceleration(void* userData, const vrpn_TRACKERACCCB t);
 static void VRPN_CALLBACK HandleButton(void* userData, const vrpn_BUTTONCB b);
-
+static void VRPN_CALLBACK HandleMockButton(void* userData, const vrpn_BUTTONCB b);
 vtkCxxRevisionMacro(vtkVRPNPhantom, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkVRPNPhantom);
 
@@ -74,6 +74,7 @@ vtkVRPNPhantom::vtkVRPNPhantom()
   this->PhantomTracker = NULL;
   this->PhantomButton = NULL;
   this->PhantomForceDevice = NULL;
+  this->PhantomType = PHANTOM_TYPE_DESKTOP;
 
   this->SetPhantom2WorldTranslation(0.0, 0.0, 0.0);
   this->SetPhantom2WorldRotation(1.0, 0.0, 0.0, 0.0);
@@ -88,7 +89,7 @@ vtkVRPNPhantom::~vtkVRPNPhantom()
   if (this->PhantomTracker) delete this->PhantomTracker;
   if (this->PhantomButton) delete this->PhantomButton;
   if (this->PhantomForceDevice) delete this->PhantomForceDevice;
-
+  free (this->mockButtonAddress);
   delete this->Internals;
 }
 //Allows user to specify the sensor used for this phantom
@@ -123,17 +124,37 @@ int vtkVRPNPhantom::Initialize()
     vtkErrorMacro(<<"Can't register callback.");
     return 0;
     }
-
-  this->PhantomButton = new vrpn_Button_Remote(this->DeviceName);
+ 
+  this->PhantomButton = new vrpn_Button_Remote(this->DeviceName); 
   if (this->PhantomButton->register_change_handler(this, HandleButton) == -1)
   {
     vtkErrorMacro(<<"Can't register callback.");
     return 0;
   }
-
+  if (this->mockButtonAddress != NULL )
+  {
+	  this->PhantomMockButton = new vrpn_Button_Remote(this->mockButtonAddress);
+	  
+	 if (this->PhantomMockButton->register_change_handler(this, HandleMockButton) == -1)
+	 {
+	 	vtkErrorMacro(<<"Can't register callback.");
+		return 0;
+	 }
+	 this->PhantomType = PHANTOM_TYPE_DESKTOP;
+  }
+  else
+  {
+	  
+	 this->PhantomType = PHANTOM_TYPE_OMNI;
+  }
   return 1;
 }
-
+void vtkVRPNPhantom::SetPhantomMockButtonAddress(const char* address)
+{
+	this->mockButtonAddress = (char *) malloc(sizeof(address));
+	strcpy(this->mockButtonAddress,address);
+}
+  
 //----------------------------------------------------------------------------
 void vtkVRPNPhantom::Update() 
 {
@@ -141,6 +162,10 @@ void vtkVRPNPhantom::Update()
     {
     this->PhantomTracker->mainloop();
     }
+  if (this->PhantomMockButton)
+  {
+	  this->PhantomMockButton->mainloop();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -465,7 +490,13 @@ void vtkVRPNPhantom::SetButton(int button, bool value)
 //----------------------------------------------------------------------------
 bool vtkVRPNPhantom::GetButton(int button)
 {
-  return this->Internals->Buttons[button];
+	int buttonSize = this->Internals->Buttons.size()  - 1;
+	if (buttonSize >= button)
+	{
+		bool returnVal =  this->Internals->Buttons[button];
+		return returnVal;
+	}
+	return false;
 }
 
 //----------------------------------------------------------------------------
@@ -482,8 +513,17 @@ void vtkVRPNPhantom::SetToggle(int button, bool toggle)
 void VRPN_CALLBACK HandleButton(void* userData, const vrpn_BUTTONCB b) {
   vtkVRPNPhantom* Phantom = static_cast<vtkVRPNPhantom*>(userData);
 
-  if (b.button < Phantom->GetNumberOfButtons())
+  if (b.button < Phantom->GetNumberOfButtons())// Num buttons set to 2
     {
     Phantom->SetButton(b.button, b.state != 0);
+    }
+}
+//----------------------------------------------------------------------------
+void VRPN_CALLBACK HandleMockButton(void* userData, const vrpn_BUTTONCB b) {
+  vtkVRPNPhantom* Phantom = static_cast<vtkVRPNPhantom*>(userData);
+
+  if ( (b.button + 1) < Phantom->GetNumberOfButtons())// Num buttons set to 2
+    {
+    Phantom->SetButton((b.button + 1), b.state != 0);
     }
 }
