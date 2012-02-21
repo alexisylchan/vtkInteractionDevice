@@ -89,7 +89,7 @@ vtkVRPNPhantom::~vtkVRPNPhantom()
   if (this->PhantomTracker) delete this->PhantomTracker;
   if (this->PhantomButton) delete this->PhantomButton;
   if (this->PhantomForceDevice) delete this->PhantomForceDevice;
-  free (this->mockButtonAddress);
+  if (this->mockButtonAddress) free (this->mockButtonAddress);
   delete this->Internals;
 }
 //Allows user to specify the sensor used for this phantom
@@ -162,7 +162,7 @@ void vtkVRPNPhantom::Update()
     {
     this->PhantomTracker->mainloop();
     }
-  if (this->PhantomMockButton)
+  if (this->PhantomMockButton != NULL)
   {
 	  this->PhantomMockButton->mainloop();
   }
