@@ -75,7 +75,8 @@ vtkVRPNPhantom::vtkVRPNPhantom()
   this->PhantomButton = NULL;
   this->PhantomForceDevice = NULL;
   this->PhantomType = PHANTOM_TYPE_DESKTOP;
-
+  this->mockButtonAddress = 0;
+  this->PhantomMockButton = NULL;
   this->SetPhantom2WorldTranslation(0.0, 0.0, 0.0);
   this->SetPhantom2WorldRotation(1.0, 0.0, 0.0, 0.0);
 
@@ -162,7 +163,7 @@ void vtkVRPNPhantom::Update()
     {
     this->PhantomTracker->mainloop();
     }
-  if (this->PhantomMockButton != NULL)
+  if (this->PhantomMockButton)
   {
 	  this->PhantomMockButton->mainloop();
   }
