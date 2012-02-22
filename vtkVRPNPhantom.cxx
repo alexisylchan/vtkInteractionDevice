@@ -75,7 +75,7 @@ vtkVRPNPhantom::vtkVRPNPhantom()
   this->PhantomButton = NULL;
   this->PhantomForceDevice = NULL;
   this->PhantomType = PHANTOM_TYPE_OMNI;
-  this->mockButtonAddress = 0;
+  this->mockButtonAddress = NULL;
   this->PhantomMockButton = NULL;
   this->SetPhantom2WorldTranslation(0.0, 0.0, 0.0);
   this->SetPhantom2WorldRotation(1.0, 0.0, 0.0, 0.0);
@@ -89,6 +89,7 @@ vtkVRPNPhantom::~vtkVRPNPhantom()
  // if (this->Phantom) delete this->Phantom;
   if (this->PhantomTracker) delete this->PhantomTracker;
   if (this->PhantomButton) delete this->PhantomButton;
+  if (this->PhantomMockButton) delete this->PhantomMockButton;
   if (this->PhantomForceDevice) delete this->PhantomForceDevice;
   if (this->mockButtonAddress) free (this->mockButtonAddress);
   delete this->Internals;
@@ -152,8 +153,14 @@ int vtkVRPNPhantom::Initialize()
 }
 void vtkVRPNPhantom::SetPhantomMockButtonAddress(const char* address)
 {
-	this->mockButtonAddress = (char *) malloc(sizeof(address));
-	strcpy(this->mockButtonAddress,address);
+	this->mockButtonAddress = (char *) malloc(strlen(address)+1);
+	memcpy(this->mockButtonAddress,address,strlen(address) + 1); 
+}
+  
+
+char* vtkVRPNPhantom::GetPhantomMockButtonAddress()
+{
+	return this->mockButtonAddress;
 }
   
 //----------------------------------------------------------------------------

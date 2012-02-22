@@ -105,6 +105,7 @@ public:
   double GetAccelerationRotationDelta(int sensor = 0);
 
   void SetPhantomMockButtonAddress(const char* address);
+  char* GetPhantomMockButtonAddress();
   vrpn_Tracker_Remote* PhantomTracker;
   vrpn_Button_Remote* PhantomButton;
   vrpn_Button_Remote* PhantomMockButton;
