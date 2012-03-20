@@ -1,16 +1,16 @@
 /*=========================================================================
 
-  Name:        vtkVRPNTrackerCustomSensorStyleCamera.h
+Name:        vtkVRPNTrackerCustomSensorStyleCamera.h
 
-  Author:      Alexis YL Chan
+Author:      Alexis YL Chan
 
-  Copyright:   The Renaissance Computing Institute (RENCI)
+Copyright:   The Renaissance Computing Institute (RENCI)
 
-  License:     Licensed under the RENCI Open Source Software License v. 1.0.
-               
-               See included License.txt or 
-               http://www.renci.org/resources/open-source-software-license
-               for details.
+License:     Licensed under the RENCI Open Source Software License v. 1.0.
+
+See included License.txt or 
+http://www.renci.org/resources/open-source-software-license
+for details.
 
 =========================================================================*/
 // .NAME vtkVRPNTrackerCustomSensorStyleCamera
@@ -29,31 +29,29 @@
 class VTK_INTERACTIONDEVICE_EXPORT vtkVRPNTrackerCustomSensorStyleCamera : public vtkVRPNTrackerStyleCamera
 {
 public:
-  static vtkVRPNTrackerCustomSensorStyleCamera* New();
-  vtkTypeRevisionMacro(vtkVRPNTrackerCustomSensorStyleCamera,vtkVRPNTrackerStyleCamera);
-  //void PrintSelf(ostream&, vtkIndent); 
+	static vtkVRPNTrackerCustomSensorStyleCamera* New();
+	vtkTypeRevisionMacro(vtkVRPNTrackerCustomSensorStyleCamera,vtkVRPNTrackerStyleCamera);
+	// Description:
+	// Perform interaction based on an event
+	virtual void OnEvent(vtkObject* caller, unsigned long eid, void* callData);
 
-  // Description:
-  // Perform interaction based on an event
-  virtual void OnEvent(vtkObject* caller, unsigned long eid, void* callData);
-
-  // Description:
-  // Set the tracker receiving events from
-  void SetTracker(vtkVRPNTrackerCustomSensor*);
-  void SetFrontOfMonitor(bool frontOfMonitor);
-  void SetDistanceFromRemote(double distanceFromRemote);
+	// Description:
+	// Set the tracker receiving events from
+	void SetTracker(vtkVRPNTrackerCustomSensor*);
+	void SetFrontOfMonitor(bool frontOfMonitor);
+	void SetDistanceFromRemote(double distanceFromRemote);
 
 protected:
-  vtkVRPNTrackerCustomSensorStyleCamera();
-  ~vtkVRPNTrackerCustomSensorStyleCamera();
+	vtkVRPNTrackerCustomSensorStyleCamera();
+	~vtkVRPNTrackerCustomSensorStyleCamera();
 
-  virtual void OnTracker(vtkVRPNTrackerCustomSensor*);
+	virtual void OnTracker(vtkVRPNTrackerCustomSensor*);
 
 private:
 	bool frontOfMonitor;
 	double distanceFromRemote;
-  vtkVRPNTrackerCustomSensorStyleCamera(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
-  void operator=(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
+	vtkVRPNTrackerCustomSensorStyleCamera(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
+	void operator=(const vtkVRPNTrackerCustomSensorStyleCamera&);  // Not implemented.
 };
 
 #endif
