@@ -25,6 +25,8 @@ for details.
 
 #include "vtkVRPNTracker.h"
 
+class vtkMatrix4x4;
+
 
 class VTK_INTERACTIONDEVICE_EXPORT vtkVRPNTrackerCustomSensor : public vtkVRPNTracker
 {
@@ -64,10 +66,15 @@ public:
 	void SetAccelerationRotationDelta(double delta);
 	double GetAccelerationRotationDelta();
 
+	void SetTrackerToVTKTransform(vtkMatrix4x4* trackerToVTKTransform);
+	vtkMatrix4x4* GetTrackerToVTKTransform();
+
+
 protected:
 	vtkVRPNTrackerCustomSensor();
 	~vtkVRPNTrackerCustomSensor();
 
+	vtkMatrix4x4* trackerToVTKTransform;
 
 private:
 	static const int INTERNAL_SENSOR = 0;

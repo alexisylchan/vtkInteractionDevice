@@ -78,7 +78,7 @@ void vtkVRPNTrackerCustomSensorStyleCamera::OnTracker(vtkVRPNTrackerCustomSensor
 	// Get the rotation matrix
 	double rotMat[3][3];
 	vtkMath::QuaternionToMatrix3x3(tracker->GetRotation(), rotMat);
-	double scale = /*1.732/0.22;*/ (this->frontOfMonitor)? (camera->GetDistance()/(2*camera->O2Screen)) : (camera->GetDistance()/(this->distanceFromRemote));
+	double scale = /*1.732/0.22;*/ (this->frontOfMonitor)? (/*camera->GetDistance()*/1/(camera->O2Screen)) : (/*camera->GetDistance()*/1/(this->distanceFromRemote));
 	camera->SetHeadPose(rotMat[0][0], rotMat[0][1],rotMat[0][2], tracker->GetPosition()[0]*scale,
 		rotMat[1][0], rotMat[1][1],rotMat[1][2], tracker->GetPosition()[1]*scale,
 		rotMat[2][0], rotMat[2][1],rotMat[2][2], tracker->GetPosition()[2]*scale,

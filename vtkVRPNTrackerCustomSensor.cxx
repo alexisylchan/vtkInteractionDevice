@@ -59,7 +59,9 @@ vtkVRPNTrackerCustomSensor::vtkVRPNTrackerCustomSensor()
 	this->Tracker = NULL;
 
 	this->SetTracker2WorldTranslation(0.0, 0.0, 0.0);
-	this->SetTracker2WorldRotation(1.0, 0.0, 0.0, 0.0);
+	this->SetTracker2WorldRotation(1.0, 0.0, 0.0, 0.0); 
+	this->trackerToVTKTransform = vtkMatrix4x4::New();
+	this->trackerToVTKTransform->Identity();
 	this->Internals->sensorIndex = 0;
 
 	this->InitializeSensors();
@@ -69,7 +71,10 @@ vtkVRPNTrackerCustomSensor::vtkVRPNTrackerCustomSensor()
 vtkVRPNTrackerCustomSensor::~vtkVRPNTrackerCustomSensor() 
 {
 	if (this->Tracker) delete this->Tracker;
-
+	if (this->trackerToVTKTransform) 
+	{
+		this->trackerToVTKTransform->Delete();
+	}
 	delete this->Internals;
 }
 //Allows user to specify the sensor used for this tracker
@@ -284,90 +289,6 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 	if (t.sensor == tracker->GetSensorIndex())
 	{
 
-	//	// Transform the position
-	//	double pos[4];
-	//	for (int i = 0; i < 3; i++)
-	//	{
-	//		pos[i] = t.pos[i];
-	//	}
-	//	pos[3] = 1;
-	//	// Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
-	//	double vtkQuat[4];
-	//	vtkQuat[0] = t.quat[3];
-	//	vtkQuat[1] = t.quat[0];
-	//	vtkQuat[2] = t.quat[1];
-	//	vtkQuat[3] = t.quat[2];
-
-	//	// Transform the rotation via matrix operations.  
-	//	// Would be nice if VTK had quaternion operations instead...
-	//	double rot[3][3];
-
-
-	//	vtkMath::QuaternionToMatrix3x3(vtkQuat, rot); 
-
-
-
-
-	//	//Convert & scale to screen coordinates
-
-	//	double t2wTrans[3];
-	//	tracker->GetTracker2WorldTranslation(t2wTrans);
-	//	vtkMatrix4x4* trackerTransformM = vtkMatrix4x4::New();
-	//	trackerTransformM->SetElement(0,0,0);
-	//	trackerTransformM->SetElement(0,1,-1);
-	//	trackerTransformM->SetElement(0,2,0);
-	//	trackerTransformM->SetElement(0,3,-1*t2wTrans[1]);
-	//	trackerTransformM->SetElement(1,0,0);
-	//	trackerTransformM->SetElement(1,1,0);
-	//	trackerTransformM->SetElement(1,2,1);
-	//	trackerTransformM->SetElement(1,3, 1*t2wTrans[2]);
-	//	trackerTransformM->SetElement(2,0,-1);
-	//	trackerTransformM->SetElement(2,1,0);
-	//	trackerTransformM->SetElement(2,2,0); 
-	//	trackerTransformM->SetElement(2,3,-1*t2wTrans[0]);
-	//	trackerTransformM->SetElement(3,0, 0);
-	//	trackerTransformM->SetElement(3,1, 0 );
-	//	trackerTransformM->SetElement(3,2,0); 
-	//	trackerTransformM->SetElement(3,3,1);
-	//	trackerTransformM->MultiplyPoint(pos,pos);
-	//	double newPosition2[4];
-	//	for (int i = 0; i < 3; i++) {
-	//		pos[i] = pos[i]*1.732/0.22;//6.69/0.287; //TODO: incorporate scale in tracker2worldtranslation
-	//	}  
-
-
-	//	tracker->SetPosition(pos);
-
-	//	// Comment out rotation because currently debugging without tracker transforms
-
-	//	double t2wRot[3][3]; 
-	//	//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
-	//	// To ParaView Space. The original Tracker2WorldRotation was used to denote rotation from
-	//	// Head to Eye.
-	//	vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
-	//	vtkMath::Multiply3x3(t2wRot, rot, rot); 
-	//	vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);
-
-	//	// Set the rotation for this sensor
-	//	tracker->SetRotation(vtkQuat);
-	//}
-
-		/**********************************COMMENTED OUT TO TEST KINECT*************************************/
-		double start[3] = {5.525964,  2.960615,  1.256135};
-		double end[3] =   {5.525964,  2.960615,   1.256135 }; /*{5.424874,  2.954511,   0.927396 }; */
-		double startToEndVec[4];
-		for (int i = 0; i < 3; i++)
-		{
-			startToEndVec[i] = end[i] - start[i];
-		}
-		startToEndVec[3] =1;  
-		// Transform the position
-		double pos[4];
-		for (int i = 0; i < 3; i++)
-		{
-			pos[i] = t.pos[i];
-		}
-		pos[3] = 1;
 		// Convert from vrpn quaternion (x, y, z, w) to vtk quaternion (w, x, y, z)
 		double vtkQuat[4];
 		vtkQuat[0] = t.quat[3];
@@ -375,86 +296,36 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 		vtkQuat[2] = t.quat[1];
 		vtkQuat[3] = t.quat[2];
 
-		// Transform the rotation via matrix operations.  
-		// Would be nice if VTK had quaternion operations instead...
-		double rot[3][3];
+		double rot[3][3]; 
 
-
-		vtkMath::QuaternionToMatrix3x3(vtkQuat, rot); 
-
-		//Apply Head to Eye Transform before converting to screen coordinate frame
-		vtkMatrix4x4* m4 = vtkMatrix4x4::New();
-		m4->SetElement(0,0,rot[0][0]);
-		m4->SetElement(0,1,rot[0][1]);
-		m4->SetElement(0,2,rot[0][2]);
-		m4->SetElement(0,3,0); 
-		m4->SetElement(1,0,rot[1][0]);
-		m4->SetElement(1,1,rot[1][1]);
-		m4->SetElement(1,2,rot[1][2]);
-		m4->SetElement(1,3,0);
-		m4->SetElement(2,0,rot[2][0]);
-		m4->SetElement(2,1,rot[2][1]);
-		m4->SetElement(2,2,rot[2][2]);
-		m4->SetElement(2,3,0);  
-		m4->SetElement(3,0,rot[3][0]);
-		m4->SetElement(3,1,rot[3][1]);
-		m4->SetElement(3,2,rot[3][2]);
-		m4->SetElement(3,3,1); 
-		m4->MultiplyPoint( startToEndVec, startToEndVec);
-
-		//Get cyclopean eye position by adding the head to eye vector from the hiball position
-
-		double newPosition[4];
-		for (int i =0; i < 3; i++)
+		vtkMatrix4x4* vrpnReading = vtkMatrix4x4::New();
+		vrpnReading->Identity();
+		vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);    
+		for (int i = 0; i < 3; i++)
 		{
-			pos[i] = pos[i] +  startToEndVec[i];
+			vrpnReading->SetElement(i,3, t.pos[i]);
+			for (int j = 0; j < 3; j++)
+			{
+				vrpnReading->SetElement(i,j, rot[i][j]);
+			}
 		} 
 
-
-		//Convert & scale to screen coordinates
-
-		double t2wTrans[3];
-		tracker->GetTracker2WorldTranslation(t2wTrans);
-		vtkMatrix4x4* trackerTransformM = vtkMatrix4x4::New();
-		trackerTransformM->SetElement(0,0,0);
-		trackerTransformM->SetElement(0,1,-1);
-		trackerTransformM->SetElement(0,2,0);
-		trackerTransformM->SetElement(0,3,-1*t2wTrans[1]);
-		trackerTransformM->SetElement(1,0,0);
-		trackerTransformM->SetElement(1,1,0);
-		trackerTransformM->SetElement(1,2,1);
-		trackerTransformM->SetElement(1,3, 1*t2wTrans[2]);
-		trackerTransformM->SetElement(2,0,-1);
-		trackerTransformM->SetElement(2,1,0);
-		trackerTransformM->SetElement(2,2,0); 
-		trackerTransformM->SetElement(2,3,-1*t2wTrans[0]);
-		trackerTransformM->SetElement(3,0, 0);
-		trackerTransformM->SetElement(3,1, 0 );
-		trackerTransformM->SetElement(3,2,0); 
-		trackerTransformM->SetElement(3,3,1); 
-		trackerTransformM->MultiplyPoint(pos,pos);
-		double newPosition2[4];
-		for (int i = 0; i < 3; i++) {
-			pos[i] = pos[i];//6.69/0.287; //TODO: incorporate scale in tracker2worldtranslation
-		}  
-
-
-		tracker->SetPosition(pos);
-
-		// Comment out rotation because currently debugging without tracker transforms
-
-		double t2wRot[3][3]; 
-		//Note:Tracker2WorldRotation is used to denote rotation transform from Tracker Space
-		// To ParaView Space. The original Tracker2WorldRotation was used to denote rotation from
-		// Head to Eye.
-		vtkMath::QuaternionToMatrix3x3(tracker->GetTracker2WorldRotation(), t2wRot);
-		vtkMath::Multiply3x3(t2wRot, rot, rot); 
+		vtkMatrix4x4::Multiply4x4(tracker->GetTrackerToVTKTransform(),vrpnReading,vrpnReading); 
+		double pos[3];
+		for (int k = 0; k < 3; k++)
+		{
+			pos[k] = vrpnReading->GetElement(k,3);
+			for (int l = 0; l < 3; l++)
+			{
+				rot[k][l] = vrpnReading->GetElement(k,l);
+			}
+		}
+		tracker->SetPosition(pos);   
 		vtkMath::Matrix3x3ToQuaternion(rot, vtkQuat);
 
 		// Set the rotation for this sensor
 		tracker->SetRotation(vtkQuat);
 
-		/**********************************END COMMENTED OUT TO TEST KINECT*************************************/
 	}
 }
 
@@ -506,4 +377,24 @@ void VRPN_CALLBACK HandleAcceleration(void* userData, const vrpn_TRACKERACCCB t)
 		// Set the acceleration rotation delta for this sensor
 		tracker->SetAccelerationRotationDelta(t.acc_quat_dt);
 	}
+}
+//----------------------------------------------------------------------------
+
+void vtkVRPNTrackerCustomSensor::SetTrackerToVTKTransform(vtkMatrix4x4* trackerToVTKTransform)
+{
+	if (this->trackerToVTKTransform){
+		this->trackerToVTKTransform->Delete();
+	}
+	this->trackerToVTKTransform = trackerToVTKTransform;
+}
+//----------------------------------------------------------------------------
+
+vtkMatrix4x4* vtkVRPNTrackerCustomSensor::GetTrackerToVTKTransform()
+{
+	if (!this->trackerToVTKTransform){
+		this->trackerToVTKTransform = vtkMatrix4x4::New();
+		this->trackerToVTKTransform->Identity();
+	}
+	return this->trackerToVTKTransform;
+ 
 }
