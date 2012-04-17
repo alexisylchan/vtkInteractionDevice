@@ -62,6 +62,12 @@ vtkVRPNTrackerCustomSensor::vtkVRPNTrackerCustomSensor()
 	this->SetTracker2WorldRotation(1.0, 0.0, 0.0, 0.0); 
 	this->trackerToVTKTransform = vtkMatrix4x4::New();
 	this->trackerToVTKTransform->Identity();
+	this->eyeToTrackerTransform = vtkMatrix4x4::New();
+	this->eyeToTrackerTransform->Identity();
+	this->rotate180DegZAxis = vtkMatrix4x4::New();
+	this->rotate180DegZAxis->SetElement(0,0, -1); 
+	this->rotate180DegZAxis->SetElement(1,1, -1); 
+	this->rotate180DegZAxis->SetElement(2,2,  1);  
 	this->Internals->sensorIndex = 0;
 
 	this->InitializeSensors();
@@ -74,6 +80,14 @@ vtkVRPNTrackerCustomSensor::~vtkVRPNTrackerCustomSensor()
 	if (this->trackerToVTKTransform) 
 	{
 		this->trackerToVTKTransform->Delete();
+	}
+	if (this->eyeToTrackerTransform) 
+	{
+		this->eyeToTrackerTransform->Delete();
+	}
+	if (this->rotate180DegZAxis) 
+	{
+		this->rotate180DegZAxis->Delete();
 	}
 	delete this->Internals;
 }
@@ -303,20 +317,30 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 		vtkMath::QuaternionToMatrix3x3(vtkQuat, rot);    
 		for (int i = 0; i < 3; i++)
 		{
-			vrpnReading->SetElement(i,3, t.pos[i]);
 			for (int j = 0; j < 3; j++)
 			{
 				vrpnReading->SetElement(i,j, rot[i][j]);
 			}
 		} 
+		// Rotate Hiball orientation 180deg around z-axis in 3dTech space
+		vtkMatrix4x4::Multiply4x4(tracker->rotate180DegZAxis,vrpnReading,vrpnReading);
 
+		for (int k = 0; k < 3; k++)
+		{
+			vrpnReading->SetElement(k,3, t.pos[k]);
+		}
+		//Transform from Hiball To Eye
+		vtkMatrix4x4::Multiply4x4(vrpnReading,tracker->GetEyeToTrackerTransform(),vrpnReading);
+		//Apply Transform from 3rdTech to VTK
 		vtkMatrix4x4::Multiply4x4(tracker->GetTrackerToVTKTransform(),vrpnReading,vrpnReading); 
+
+		//Set HeadPose in VTK coordinate frame
 		double pos[3];
 		for (int k = 0; k < 3; k++)
 		{
 			pos[k] = vrpnReading->GetElement(k,3);
 			for (int l = 0; l < 3; l++)
-			{
+			{     
 				rot[k][l] = vrpnReading->GetElement(k,l);
 			}
 		}
@@ -396,5 +420,27 @@ vtkMatrix4x4* vtkVRPNTrackerCustomSensor::GetTrackerToVTKTransform()
 		this->trackerToVTKTransform->Identity();
 	}
 	return this->trackerToVTKTransform;
+ 
+}
+
+
+//----------------------------------------------------------------------------
+
+void vtkVRPNTrackerCustomSensor::SetEyeToTrackerTransform(vtkMatrix4x4* eyeToTrackerTransform)
+{
+	if (this->eyeToTrackerTransform){
+		this->eyeToTrackerTransform->Delete();
+	}
+	this->eyeToTrackerTransform = eyeToTrackerTransform;
+}
+//----------------------------------------------------------------------------
+
+vtkMatrix4x4* vtkVRPNTrackerCustomSensor::GetEyeToTrackerTransform()
+{
+	if (!this->eyeToTrackerTransform){
+		this->eyeToTrackerTransform = vtkMatrix4x4::New();
+		this->eyeToTrackerTransform->Identity();
+	}
+	return this->eyeToTrackerTransform;
  
 }

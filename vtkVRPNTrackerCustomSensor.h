@@ -69,13 +69,16 @@ public:
 	void SetTrackerToVTKTransform(vtkMatrix4x4* trackerToVTKTransform);
 	vtkMatrix4x4* GetTrackerToVTKTransform();
 
+	void SetEyeToTrackerTransform(vtkMatrix4x4* eyeToTrackerTransform);
+	vtkMatrix4x4* GetEyeToTrackerTransform();
+	vtkMatrix4x4* rotate180DegZAxis;
 
 protected:
 	vtkVRPNTrackerCustomSensor();
 	~vtkVRPNTrackerCustomSensor();
 
 	vtkMatrix4x4* trackerToVTKTransform;
-
+	vtkMatrix4x4* eyeToTrackerTransform;
 private:
 	static const int INTERNAL_SENSOR = 0;
 	void InitializeSensors();
