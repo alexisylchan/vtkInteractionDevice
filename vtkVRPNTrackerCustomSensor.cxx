@@ -323,7 +323,7 @@ void VRPN_CALLBACK HandlePosition(void* userData, const vrpn_TRACKERCB t) {
 			}
 		} 
 		// Rotate Hiball orientation 180deg around z-axis in 3dTech space
-		vtkMatrix4x4::Multiply4x4(tracker->rotate180DegZAxis,vrpnReading,vrpnReading);
+		//vtkMatrix4x4::Multiply4x4(tracker->rotate180DegZAxis,vrpnReading,vrpnReading);
 
 		for (int k = 0; k < 3; k++)
 		{
